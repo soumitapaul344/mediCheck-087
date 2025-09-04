@@ -30,14 +30,12 @@ class AuthService {
   // Current User Email
   String? getCurrentUserEmail() {
     final session = _supabase.auth.currentSession;
-    final user = session?.user;
-    return user?.email;
+    return session?.user?.email;
   }
 
   // Current User ID
   String? getCurrentUserId() {
     final session = _supabase.auth.currentSession;
-    final user = session?.user;
-    return user?.id;
+    return session?.user?.id;
   }
 }
