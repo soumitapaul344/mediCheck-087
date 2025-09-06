@@ -64,20 +64,14 @@ class _NotePageState extends State<NotePage> {
               itemBuilder: (_, index) {
                 final note = notes[index];
                 return ListTile(
-                  title: Text(note['content']),
+                  title: Text(note['content'] ?? ''),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete),
                     onPressed: () {
-                      final user = Provider.of<UserProvider>(
+                      Provider.of<NotesProvider>(
                         context,
                         listen: false,
-                      ).user;
-                      if (user != null) {
-                        Provider.of<NotesProvider>(
-                          context,
-                          listen: false,
-                        ).deleteNote(note['id'], user.id);
-                      }
+                      ).deleteNote(note['id']);
                     },
                   ),
                 );
