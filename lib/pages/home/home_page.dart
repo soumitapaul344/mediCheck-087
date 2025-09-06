@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const NotePage(),
     const BmiPage(),
-    const DietPage(),
+    const DietPage(bmiCategory: "Normal"),
     const ProfilePage(),
   ];
 
