@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'bmi_page.dart';
-import 'diet_page.dart';
+import '../../pages/home/bmi_page.dart';
+import '../../pages/home/diet_page.dart';
 import '../../pages/notes/note_page.dart';
 import '../../pages/profile/profile_page.dart';
 
