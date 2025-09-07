@@ -1,35 +1,38 @@
 class UserProfile {
   final String id;
-  final String email;
-  final String name;
-  final int age;
-  final String gender;
-  final double height;
-  final double weight;
+  final String? email;
+  final String? name;
+  final int? age;
+  final String? gender;
+  final double? height;
+  final double? weight;
 
   UserProfile({
     required this.id,
-    required this.email,
-    required this.name,
-    required this.age,
-    required this.gender,
-    required this.height,
-    required this.weight,
+    this.email,
+    this.name,
+    this.age,
+    this.gender,
+    this.height,
+    this.weight,
   });
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) {
+  factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
-      id: json['id'] ?? '',
-      email: json['email'] ?? '',
-      name: json['name'] ?? '',
-      age: json['age'] ?? 0,
-      gender: json['gender'] ?? 'N/A',
-      height: (json['height'] ?? 0).toDouble(),
-      weight: (json['weight'] ?? 0).toDouble(),
+      id: map['id'],
+      email: map['email'],
+      name: map['name'],
+      age: map['age'],
+      gender: map['gender'],
+      height: (map['height'] as num?)?.toDouble(),
+      weight: (map['weight'] as num?)?.toDouble(),
     );
   }
 
-  Map<String, dynamic> toJson() {
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      UserProfile.fromMap(json);
+
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'email': email,

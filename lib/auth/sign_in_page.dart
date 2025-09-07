@@ -47,7 +47,10 @@ class _SignInPageState extends State<SignInPage> {
       );
 
       if (profile != null) {
-        Provider.of<UserProvider>(context, listen: false).setUser(profile);
+        Provider.of<UserProvider>(
+          context,
+          listen: false,
+        ).loadUserProfile(profile);
 
         if (!mounted) return;
         Navigator.pushReplacement(

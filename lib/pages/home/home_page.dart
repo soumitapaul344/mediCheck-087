@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'bmi_page.dart';
 import 'diet_page.dart';
+import '../profile/profile_page.dart';
+import '../notes/note_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -17,6 +19,13 @@ class HomePage extends StatelessWidget {
         title: const Text("Health Assistant"),
         centerTitle: true,
         backgroundColor: Colors.cyan,
+        actions: [
+          // Profile Button in the AppBar
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => _navigate(context, const ProfilePage()),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -26,32 +35,36 @@ class HomePage extends StatelessWidget {
           crossAxisSpacing: 20,
           children: [
             // BMI CALCULATION
-            GestureDetector(
-              onTap: () => _navigate(context, const BmiPage()),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.lightBlueAccent,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 5),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    "BMI Calculation",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+            _buildGridItem(
+              context,
+              title: "BMI Calculation",
+              icon: Icons.monitor_weight_outlined,
+              page: const BmiPage(),
             ),
 
+            // DIET PLAN
+            // This is a temporary fix. The bmiCategory should be
+            // calculated in the BmiPage and passed here.
+            // _buildGridItem(
+            //   context,
+            //   title: "Diet Plan",
+            //   icon: Icons.local_dining,
+            //   page: const DietPage(bmiCategory: "Normal"),
+            // ),
+
+            // // NOTES
+            // _buildGridItem(
+            //   context,
+            //   title: "Notes",
+            //   icon: Icons.notes_outlined,
+            //   page: const NotePage(),
+            // ),
+
             // CHIKUNGUNYA DETECTION
-            GestureDetector(
+            _buildGridItem(
+              context,
+              title: "Chikungunya Detection",
+              icon: Icons.bug_report,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -59,30 +72,13 @@ class HomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.lightBlueAccent,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 5),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    "Chikungunya Detection",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
             ),
 
             // COVID DETECTION
-            GestureDetector(
+            _buildGridItem(
+              context,
+              title: "Covid-19 Detection",
+              icon: Icons.coronavirus,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -90,30 +86,13 @@ class HomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.lightBlueAccent,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 5),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    "Covid-19 Detection",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
             ),
 
             // ALLERGY DETECTION
-            GestureDetector(
+            _buildGridItem(
+              context,
+              title: "Allergy Detection",
+              icon: Icons.sick_outlined,
               onTap: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -121,28 +100,44 @@ class HomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.lightBlueAccent,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 5),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    "Allergy Detection",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGridItem(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    Widget? page,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap ?? () => _navigate(context, page!),
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        color: Colors.lightBlueAccent,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 50, color: Colors.white),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

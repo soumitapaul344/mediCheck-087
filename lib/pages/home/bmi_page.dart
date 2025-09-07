@@ -39,12 +39,6 @@ class _BmiPageState extends State<BmiPage> {
         bmi = bmiValue;
         category = cat;
       });
-
-      // Navigate to Diet Page after calculation
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => DietPage(bmiCategory: cat)),
-      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Enter valid height & weight")),
@@ -57,6 +51,38 @@ class _BmiPageState extends State<BmiPage> {
     _heightController.dispose();
     _weightController.dispose();
     super.dispose();
+  }
+
+  // Suggest a logical button label based on BMI category
+  String getDietButtonText() {
+    switch (category) {
+      case "Underweight":
+        return "Gain Weight – See Diet Plan";
+      case "Normal":
+        return "Maintain Health – See Diet Plan";
+      case "Overweight":
+        return "Lose Weight – See Diet Plan";
+      case "Obese":
+        return "Strict Diet Required – See Plan";
+      default:
+        return "See Diet Plan";
+    }
+  }
+
+  // Suggest a color for button based on BMI category
+  Color getDietButtonColor() {
+    switch (category) {
+      case "Underweight":
+        return Colors.blue;
+      case "Normal":
+        return Colors.green;
+      case "Overweight":
+        return Colors.orange;
+      case "Obese":
+        return Colors.red;
+      default:
+        return Colors.cyan;
+    }
   }
 
   @override
@@ -97,22 +123,71 @@ class _BmiPageState extends State<BmiPage> {
               ),
             ),
             const SizedBox(height: 20),
-            if (bmi != null)
-              Column(
-                children: [
-                  Text(
-                    "BMI: ${bmi!.toStringAsFixed(2)}",
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+            if (bmi != null) ...[
+              // BMI Result Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Your BMI: ${bmi!.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.cyan,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Category: $category",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: getDietButtonColor(),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
-                  Text(
-                    "Category: $category",
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                ],
+                ),
               ),
+              const SizedBox(height: 20),
+
+              // Diet Plan Button
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => DietPage(bmiCategory: category),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: getDietButtonColor(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(Icons.restaurant_menu, color: Colors.white),
+                label: Text(
+                  getDietButtonText(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),
