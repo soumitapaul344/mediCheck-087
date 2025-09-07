@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../provider/user_provider.dart';
+import 'diet_page.dart';
 
 class BmiPage extends StatefulWidget {
   const BmiPage({super.key});
@@ -12,67 +11,101 @@ class BmiPage extends StatefulWidget {
 class _BmiPageState extends State<BmiPage> {
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
+
   double? bmi;
   String category = "";
 
+  // BMI Calculation Function
   void calculateBMI() {
     final height = double.tryParse(_heightController.text);
     final weight = double.tryParse(_weightController.text);
 
-    if (height != null && weight != null) {
+    if (height != null && weight != null && height > 0) {
       final heightM = height / 100;
       final bmiValue = weight / (heightM * heightM);
+
       String cat;
-      if (bmiValue < 18.5)
+      if (bmiValue < 18.5) {
         cat = "Underweight";
-      else if (bmiValue < 25)
+      } else if (bmiValue < 25) {
         cat = "Normal";
-      else if (bmiValue < 30)
+      } else if (bmiValue < 30) {
         cat = "Overweight";
-      else
+      } else {
         cat = "Obese";
+      }
 
       setState(() {
         bmi = bmiValue;
         category = cat;
       });
+
+      // Navigate to Diet Page after calculation
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DietPage(bmiCategory: cat)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter valid height & weight")),
+      );
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
+  void dispose() {
+    _heightController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("BMI Calculator")),
+      appBar: AppBar(
+        title: const Text("BMI Calculator"),
+        backgroundColor: Colors.cyan,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            if (user != null)
-              Text("Hi, ${user.name}", style: const TextStyle(fontSize: 18)),
             TextField(
               controller: _heightController,
-              decoration: const InputDecoration(labelText: "Height (cm)"),
+              decoration: const InputDecoration(
+                labelText: "Height (cm)",
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 15),
             TextField(
               controller: _weightController,
-              decoration: const InputDecoration(labelText: "Weight (kg)"),
+              decoration: const InputDecoration(
+                labelText: "Weight (kg)",
+                border: OutlineInputBorder(),
+              ),
               keyboardType: TextInputType.number,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: calculateBMI,
-              child: const Text("Calculate BMI"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan),
+              child: const Text(
+                "Calculate BMI",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
+            const SizedBox(height: 20),
             if (bmi != null)
               Column(
                 children: [
-                  const SizedBox(height: 20),
                   Text(
                     "BMI: ${bmi!.toStringAsFixed(2)}",
-                    style: const TextStyle(fontSize: 20),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     "Category: $category",

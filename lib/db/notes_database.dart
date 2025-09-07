@@ -4,52 +4,34 @@ class NotesDatabase {
   final _supabase = Supabase.instance.client;
   final String _tableName = 'notes';
 
-  // Create Note
+  // ✅ Create Note
   Future<void> createNote(String userId, String content) async {
-    final response = await _supabase.from(_tableName).insert({
+    await _supabase.from(_tableName).insert({
       'user_id': userId,
       'content': content,
     });
-
-    if (response.error != null) {
-      throw Exception('Failed to create note: ${response.error!.message}');
-    }
   }
 
-  // Read Notes
+  // ✅ Read Notes (returns list of maps)
   Future<List<Map<String, dynamic>>> getNotes(String userId) async {
     final response = await _supabase
         .from(_tableName)
         .select()
         .eq('user_id', userId);
 
-    if (response.error != null) {
-      throw Exception('Failed to fetch notes: ${response.error!.message}');
-    }
-
-    return (response.data as List<dynamic>)
-        .map((e) => Map<String, dynamic>.from(e))
+    // response is already the list of notes
+    return (response as List<dynamic>)
+        .map((e) => Map<String, dynamic>.from(e as Map))
         .toList();
   }
 
-  // Update Note
-  Future<void> updateNote(int id, String content) async {
-    final response = await _supabase
-        .from(_tableName)
-        .update({'content': content})
-        .eq('id', id);
-
-    if (response.error != null) {
-      throw Exception('Failed to update note: ${response.error!.message}');
-    }
+  // ✅ Update Note
+  Future<void> updateNote(dynamic id, String content) async {
+    await _supabase.from(_tableName).update({'content': content}).eq('id', id);
   }
 
-  // Delete Note
-  Future<void> deleteNote(int id) async {
-    final response = await _supabase.from(_tableName).delete().eq('id', id);
-
-    if (response.error != null) {
-      throw Exception('Failed to delete note: ${response.error!.message}');
-    }
+  // ✅ Delete Note
+  Future<void> deleteNote(dynamic id) async {
+    await _supabase.from(_tableName).delete().eq('id', id);
   }
 }

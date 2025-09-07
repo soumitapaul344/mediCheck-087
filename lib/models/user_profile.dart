@@ -17,21 +17,27 @@ class UserProfile {
     required this.weight,
   });
 
-  UserProfile copyWith({
-    String? name,
-    int? age,
-    String? gender,
-    double? height,
-    double? weight,
-  }) {
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
-      id: id,
-      email: email,
-      name: name ?? this.name,
-      age: age ?? this.age,
-      gender: gender ?? this.gender,
-      height: height ?? this.height,
-      weight: weight ?? this.weight,
+      id: json['id'] ?? '',
+      email: json['email'] ?? '',
+      name: json['name'] ?? '',
+      age: json['age'] ?? 0,
+      gender: json['gender'] ?? 'N/A',
+      height: (json['height'] ?? 0).toDouble(),
+      weight: (json['weight'] ?? 0).toDouble(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'age': age,
+      'gender': gender,
+      'height': height,
+      'weight': weight,
+    };
   }
 }

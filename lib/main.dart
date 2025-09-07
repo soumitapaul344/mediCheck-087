@@ -7,6 +7,8 @@ import 'auth/sign_in_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ Initialize Supabase
   await Supabase.initialize(
     url: "https://keoqvlvoyjzoxobmgqms.supabase.co",
     anonKey:

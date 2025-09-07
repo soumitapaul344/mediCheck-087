@@ -1,32 +1,44 @@
 import 'package:flutter/material.dart';
 import 'bmi_page.dart';
 import 'diet_page.dart';
+import '../../pages/notes/note_page.dart';
+import '../../pages/profile/profile_page.dart';
 
-class BmiDietCombinedPage extends StatefulWidget {
-  const BmiDietCombinedPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<BmiDietCombinedPage> createState() => _BmiDietCombinedPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _BmiDietCombinedPageState extends State<BmiDietCombinedPage> {
-  double? bmiValue;
-  String category = "Normal";
-
-  void updateBmi(double bmi, String cat) {
-    setState(() {
-      bmiValue = bmi;
-      category = cat;
-    });
-  }
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+  final List<Widget> _pages = [
+    const NotePage(),
+    const BmiPage(),
+    DietPage(bmiCategory: "Normal"), // ✅ fixed
+    const ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: BmiPageWithCallback(onBmiCalculated: updateBmi)),
-        if (bmiValue != null) Expanded(child: DietPage(bmiCategory: category)),
-      ],
+    return Scaffold(
+      body: _pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        selectedItemColor: Colors.purple,
+        unselectedItemColor: Colors.grey,
+        onTap: (index) => setState(() => _currentIndex = index),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.notes), label: "Notes"),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.fitness_center),
+            label: "BMI",
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.restaurant), label: "Diet"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        ],
+      ),
     );
   }
 }

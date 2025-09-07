@@ -2,35 +2,36 @@ import 'package:flutter/material.dart';
 
 class DietPage extends StatelessWidget {
   final String bmiCategory;
-  const DietPage({super.key, this.bmiCategory = "Normal"});
+  const DietPage({super.key, required this.bmiCategory});
 
   @override
   Widget build(BuildContext context) {
-    String recommendation = "";
+    String recommendation;
 
     switch (bmiCategory) {
       case "Underweight":
-        recommendation =
-            "Increase calorie intake: eat more proteins, carbs, healthy fats.";
+        recommendation = "Increase calories: proteins, carbs, healthy fats.";
         break;
       case "Normal":
-        recommendation =
-            "Maintain your diet: balanced carbs, protein, fats, vitamins.";
+        recommendation = "Maintain a balanced diet and stay active.";
         break;
       case "Overweight":
         recommendation =
-            "Reduce calorie intake: low fat, avoid sugary foods, exercise.";
+            "Control calories, eat more vegetables, exercise daily.";
         break;
       case "Obese":
         recommendation =
-            "Strict diet plan with medical guidance: low carbs, low fat, exercise.";
+            "Strict medical diet: low carbs, exercise, doctor consult.";
         break;
       default:
-        recommendation = "Maintain a healthy balanced diet.";
+        recommendation = "Eat healthy and stay active.";
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Diet Recommendation")),
+      appBar: AppBar(
+        title: const Text("Diet Recommendation"),
+        backgroundColor: Colors.cyan,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Text(recommendation, style: const TextStyle(fontSize: 18)),
