@@ -45,6 +45,7 @@ class _NotePageState extends State<NotePage> {
       ).addNote(user.id, content);
       _noteController.clear();
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Add note failed: $e')));
@@ -68,6 +69,7 @@ class _NotePageState extends State<NotePage> {
         listen: false,
       ).deleteNote(id, user.id);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Delete failed: $e')));

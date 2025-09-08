@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'provider/user_provider.dart';
-import 'provider/notes_provider.dart';
+import 'provider/profile_provider.dart';
 import 'auth/sign_in_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ✅ Initialize Supabase
+  // Initialize Supabase
   await Supabase.initialize(
     url: "https://keoqvlvoyjzoxobmgqms.supabase.co",
     anonKey:
@@ -24,10 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => NotesProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => ProfileProvider())],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

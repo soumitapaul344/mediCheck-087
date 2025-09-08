@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:medicheck_app/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
-import '../../db/notes_database.dart'; // Import your ProfileDatabase
-import '../../provider/user_provider.dart';
+import '../../db/profile_database.dart';
 import '../../models/user_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// This page allows the user to view and edit their profile details.
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -14,14 +13,12 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Controllers for the input fields
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   final _genderController = TextEditingController();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
-  // A boolean to track the loading state (e.g., when saving data)
   bool _isLoading = false;
 
   @override
@@ -30,41 +27,28 @@ class _ProfilePageState extends State<ProfilePage> {
     _loadProfileData();
   }
 
-  // A helper function to load data from the UserProvider and
-  // populate the text controllers.
   void _loadProfileData() {
-    // We use `listen: false` because we only need the data once
-    // and don't need to rebuild the widget when the provider changes.
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userProvider = Provider.of<ProfileProvider>(context, listen: false);
     final user = userProvider.userProfile;
 
     if (user != null) {
-      // Fix for `String?` not assignable to `String` error
       _nameController.text = user.name ?? '';
       _ageController.text = user.age.toString();
-      // Fix for `String?` not assignable to `String` error
       _genderController.text = user.gender ?? '';
       _heightController.text = user.height.toString();
       _weightController.text = user.weight.toString();
     }
   }
 
-  // Function to handle saving the profile data to Supabase.
   Future<void> _saveProfile() async {
-    // Set loading state to true to show the progress indicator.
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final userProvider = Provider.of<ProfileProvider>(context, listen: false);
       final userId = Supabase.instance.client.auth.currentUser?.id;
 
-      if (userId == null) {
-        throw Exception("User is not authenticated.");
-      }
+      if (userId == null) throw Exception("User not authenticated");
 
-      // Create a new UserProfile object from the form data.
       final updatedProfile = UserProfile(
         id: userId,
         email: userProvider.userProfile!.email,
@@ -75,7 +59,6 @@ class _ProfilePageState extends State<ProfilePage> {
         weight: double.tryParse(_weightController.text) ?? 0.0,
       );
 
-      // Use the ProfileDatabase to save the data to Supabase.
       await ProfileDatabase().upsertProfile(
         userId: updatedProfile.id,
         name: updatedProfile.name,
@@ -85,43 +68,66 @@ class _ProfilePageState extends State<ProfilePage> {
         weight: updatedProfile.weight,
       );
 
-      // Show a success message.
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile updated successfully!')),
         );
       }
     } catch (e) {
-      // Show an error message if saving fails.
       if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Failed to save profile: $e')));
       }
     } finally {
-      // Set loading state to false.
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  // DELETE profile function
+  Future<void> _deleteProfile() async {
+    final userId = Supabase.instance.client.auth.currentUser?.id;
+    if (userId == null) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await ProfileDatabase().deleteProfile(userId);
+
+      // Clear the text fields
+      _nameController.clear();
+      _ageController.clear();
+      _genderController.clear();
+      _heightController.clear();
+      _weightController.clear();
+
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Profile deleted successfully!')),
+        );
       }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to delete profile: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // We listen to the UserProvider to automatically update the UI
-    // when the user profile changes.
-    final user = Provider.of<UserProvider>(context).userProfile;
+    final user = Provider.of<ProfileProvider>(context).userProfile;
 
-    // Handle the case where no user data is available yet.
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text("User Profile"),
+          title: const Text("User Profile"),
           backgroundColor: Colors.cyan,
         ),
-        body: Center(child: Text("No profile data found.")),
+        body: const Center(child: Text("No profile data found.")),
       );
     }
 
@@ -129,6 +135,41 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: const Text("User Profile"),
         backgroundColor: Colors.cyan,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.delete),
+            tooltip: "Delete Profile",
+            onPressed: () async {
+              // Confirm before deleting
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (_) => AlertDialog(
+                  title: const Text('Confirm Delete'),
+                  content: const Text(
+                    'Are you sure you want to delete your profile?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+
+              if (confirm == true) {
+                _deleteProfile();
+              }
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -182,7 +223,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Dispose of the controllers to prevent memory leaks.
   @override
   void dispose() {
     _nameController.dispose();

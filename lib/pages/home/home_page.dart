@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'bmi_page.dart';
-import 'diet_page.dart';
 import '../profile/profile_page.dart';
-import '../notes/note_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

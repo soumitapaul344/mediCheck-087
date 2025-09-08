@@ -4,7 +4,7 @@ import '../models/user_profile.dart';
 class AuthService {
   final supabase = Supabase.instance.client;
 
-  // ✅ Sign Up and insert into users_profiles table
+  // Sign Up and insert into users_profiles table
   Future<UserProfile?> signUp(
     String email,
     String password, {
@@ -37,7 +37,7 @@ class AuthService {
     return UserProfile.fromJson(profile);
   }
 
-  // ✅ Sign In and fetch profile
+  // Sign In and fetch profile
   Future<UserProfile?> signInWithEmailPassword(
     String email,
     String password,
@@ -50,16 +50,14 @@ class AuthService {
     final user = response.user;
     if (user == null) return null;
 
-    // Fetch profile from users_profiles table
     final profileData = await supabase
         .from('users_profiles')
         .select()
         .eq('id', user.id)
-        .maybeSingle(); // returns null if no rows
+        .maybeSingle();
 
     if (profileData == null) {
-      // If profile not found, create default
-      final defaultProfile = UserProfile(
+      return UserProfile(
         id: user.id,
         email: user.email ?? email,
         name: "User",
@@ -68,7 +66,6 @@ class AuthService {
         height: 0,
         weight: 0,
       );
-      return defaultProfile;
     }
 
     return UserProfile.fromJson(profileData);

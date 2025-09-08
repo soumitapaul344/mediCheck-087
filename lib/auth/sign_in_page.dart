@@ -3,11 +3,10 @@ import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import '../pages/home/home_page.dart';
 import 'sign_up_page.dart';
-import '../provider/user_provider.dart';
-import '../models/user_profile.dart';
+import '../provider/profile_provider.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({Key? key}) : super(key: key);
+  const SignInPage({super.key});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -32,6 +31,7 @@ class _SignInPageState extends State<SignInPage> {
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter email and password")),
       );
@@ -46,13 +46,15 @@ class _SignInPageState extends State<SignInPage> {
         password,
       );
 
+      if (!mounted) return;
+
       if (profile != null) {
-        Provider.of<UserProvider>(
+        // ✅ Updated: use ProfileProvider instead of UserProvider
+        Provider.of<ProfileProvider>(
           context,
           listen: false,
-        ).loadUserProfile(profile);
+        ).saveProfile(profile);
 
-        if (!mounted) return;
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => const HomePage()),
@@ -63,6 +65,7 @@ class _SignInPageState extends State<SignInPage> {
         );
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Login Failed: $e")));

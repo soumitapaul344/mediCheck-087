@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/user_profile.dart';
-import '../provider/user_provider.dart';
+import '../provider/profile_provider.dart';
 import 'package:provider/provider.dart';
 import '../pages/home/home_page.dart';
 
@@ -36,6 +36,8 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
 
     await supabase.from('users_profiles').insert(profile);
 
+    if (!mounted) return;
+
     final userProfile = UserProfile(
       id: user.id,
       email: user.email!,
@@ -46,7 +48,11 @@ class _RegisterProfilePageState extends State<RegisterProfilePage> {
       weight: double.tryParse(_weightController.text) ?? 0,
     );
 
-    Provider.of<UserProvider>(context, listen: false).setUser(userProfile);
+    // ✅ Updated: use ProfileProvider instead of UserProvider
+    Provider.of<ProfileProvider>(
+      context,
+      listen: false,
+    ).saveProfile(userProfile);
 
     Navigator.pushReplacement(
       context,

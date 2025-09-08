@@ -17,20 +17,17 @@ class UserProfile {
     this.weight,
   });
 
-  factory UserProfile.fromMap(Map<String, dynamic> map) {
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
-      id: map['id'],
-      email: map['email'],
-      name: map['name'],
-      age: map['age'],
-      gender: map['gender'],
-      height: (map['height'] as num?)?.toDouble(),
-      weight: (map['weight'] as num?)?.toDouble(),
+      id: json['id'],
+      email: json['email'],
+      name: json['name'],
+      age: json['age'],
+      gender: json['gender'],
+      height: (json['height'] as num?)?.toDouble(),
+      weight: (json['weight'] as num?)?.toDouble(),
     );
   }
-
-  factory UserProfile.fromJson(Map<String, dynamic> json) =>
-      UserProfile.fromMap(json);
 
   Map<String, dynamic> toMap() {
     return {
