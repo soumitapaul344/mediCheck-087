@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'provider/profile_provider.dart';
-import 'auth/sign_in_page.dart';
+import 'auth/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
           useMaterial3: true,
         ),
-        home: const SignInPage(),
+        home: const WelcomePage(),
       ),
     );
   }
