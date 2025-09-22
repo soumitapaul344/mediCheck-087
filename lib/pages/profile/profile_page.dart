@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.pop(context, false),
+                      onPressed: () => Navigator.pop(context),
                       child: const Text('Cancel'),
                     ),
                     TextButton(
