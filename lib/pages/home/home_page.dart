@@ -1,6 +1,8 @@
+// home_page.dart
 import 'package:flutter/material.dart';
 import 'bmi_page.dart';
 import '../profile/profile_page.dart';
+import 'chikungunya_page.dart'; // Add this line to import the new page
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -63,13 +65,8 @@ class HomePage extends StatelessWidget {
               context,
               title: "Chikungunya Detection",
               icon: Icons.bug_report,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Chikungunya Detection Coming Soon"),
-                  ),
-                );
-              },
+              // Change this line to directly navigate to the page
+              page: const ChikungunyaPage(),
             ),
 
             // COVID DETECTION
